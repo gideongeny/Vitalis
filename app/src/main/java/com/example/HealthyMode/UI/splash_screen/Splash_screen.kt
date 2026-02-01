@@ -51,13 +51,19 @@ class Splash_screen : AppCompatActivity() {
 
         Handler().postDelayed({
             val fAuth: FirebaseAuth = FirebaseAuth.getInstance()
-            if(fAuth.currentUser != null && fAuth.currentUser!!.isEmailVerified)
-            {
-                startActivity(Intent(this, Home_screen::class.java))
-                finish()
+            val user = fAuth.currentUser
+            if (user != null) {
+                user.reload().addOnCompleteListener {
+                    if (user.isEmailVerified) {
+                        startActivity(Intent(this, Home_screen::class.java))
+                        finish()
+                    } else {
+                        startActivity(Intent(this, MainAuthentication::class.java))
+                        finish()
+                    }
+                }
             } else {
-                val intent = Intent(this, MainAuthentication::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, MainAuthentication::class.java))
                 finish()
             }
         }, 3500) // Longer delay for premium feel
