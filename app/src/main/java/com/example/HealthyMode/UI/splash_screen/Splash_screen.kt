@@ -3,8 +3,8 @@ package com.example.HealthyMode.UI.splash_screen
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -14,31 +14,52 @@ import com.example.HealthyMode.UI.Home.Home_screen
 import com.google.firebase.auth.FirebaseAuth
 
 class Splash_screen : AppCompatActivity() {
-    val SPLASH_SCREEN=5000
-    private lateinit var topAnimation: Animation
-    private lateinit var bottomAnimation: Animation
-    private lateinit var imageView: ImageView
-    private lateinit var title_txt: TextView
-    private lateinit var develop_txt: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
-        val slide= AnimationUtils.loadAnimation(this, R.anim.popup)
-        val title:TextView=findViewById(R.id.title)
-        title.animation=slide
+
+        val logoImg: ImageView = findViewById(R.id.logo_img)
+        val titleTxt: TextView = findViewById(R.id.title)
+        val taglineTxt: TextView = findViewById(R.id.tagline)
+
+        // Intro Animations (Scale and Fade)
+        logoImg.alpha = 0f
+        logoImg.scaleX = 0.5f
+        logoImg.scaleY = 0.5f
+        titleTxt.alpha = 0f
+        taglineTxt.alpha = 0f
+
+        logoImg.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(1200)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .start()
+
+        titleTxt.animate()
+            .alpha(1f)
+            .setStartDelay(600)
+            .setDuration(800)
+            .start()
+
+        taglineTxt.animate()
+            .alpha(1f)
+            .setStartDelay(1000)
+            .setDuration(800)
+            .start()
+
         Handler().postDelayed({
             val fAuth: FirebaseAuth = FirebaseAuth.getInstance()
-            if(fAuth.currentUser !=null && fAuth.currentUser!!.isEmailVerified)
+            if(fAuth.currentUser != null && fAuth.currentUser!!.isEmailVerified)
             {
                 startActivity(Intent(this, Home_screen::class.java))
                 finish()
-            }else{
-                val intent= Intent(this, MainAuthentication::class.java)
+            } else {
+                val intent = Intent(this, MainAuthentication::class.java)
                 startActivity(intent)
                 finish()
             }
-        },1200)
-
+        }, 3500) // Longer delay for premium feel
     }
 }

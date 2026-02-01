@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Vitalis 2026 World Class Theme. -->
     <style name="Theme.HealthyMode" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary</item>
@@ -14,13 +14,26 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/background</item>
         <item name="android:windowBackground">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
         
         <!-- Customize your theme here. -->
         <item name="textAppearanceHeadlineMedium">@style/TextAppearance.App.HeadlineMedium</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.App.TitleLarge</item>
     </style>
 
     <style name="TextAppearance.App.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
         <item name="android:textColor">@color/primary</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-black</item>
+    </style>
+
+    <style name="TextAppearance.App.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">@color/on_background</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="themesplash" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@color/background</item>
     </style>
 </resources>

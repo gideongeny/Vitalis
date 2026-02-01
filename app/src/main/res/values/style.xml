@@ -5,9 +5,7 @@
         <item name="android:textStyle">bold</item>
         <item name="fontFamily">@font/biorhyme_bold</item>
     </style>
-    <style name="themesplash" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/dark_orange</item>
-    </style>
+    <!-- themesplash removed from here as it is defined in themes.xml -->
     <style name="Theme.picker" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>

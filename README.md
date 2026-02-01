@@ -1,44 +1,29 @@
-# VITALIS: The 2026 Health Revolution
+# Vitalis 2026
 
-![VITALIS Logo](C:/Users/mukht/.gemini/antigravity/brain/5b839be1-1a7f-4116-8c16-cd234ea6ab77/vitalis_logo_2026_1769981140449.png)
+![Vitalis Logo](logo_vitalis.png)
 
-## 🌌 The Vision
-**VITALIS** is not just a health tracker; it's a world-class, ultra-premium ecosystem designed for the high-performance individual of 2026. Built with a "1% mindset," VITALIS balances cutting-edge technical architecture with a sophisticated, futuristic aesthetic.
+Welcome to **Vitalis**, the world-class health and wellness platform for 2026. This application has been transformed from its legacy identity into a premium, OLED-ready experience designed for the next generation of health-conscious users.
 
-## 🚀 Key Features
-- **Quantum Heart Tracking**: Real-time analysis with zero latency.
-- **Glassmorphic UI**: Ultra-premium Material 3 dark theme with frosted textures.
-- **2026 Aesthetic**: Neon highlights, fluid animations, and high-contrast typography.
-- **Production Ready**: Optimized for both APK and AAB formats.
+## 🌟 Key Features
 
-## 🛠️ Tech Stack (2026 Elite Series)
-- **Core**: Kotlin 1.9.22
-- **UI**: Material 3, ViewBinding, Lottie
-- **Architecture**: MVVM, Hilt (Dependency Injection)
-- **Database**: Room (Migrated to KSP)
-- **Network**: Volley 1.2.1
-- **Platform**: SDK 35 (Android 15)
+- **Modern Aesthetic**: A complete visual overhaul using Material 3 with a vibrant Vitalis Orange and Deep Charcoal palette.
+- **Elite Performance**: Optimized for OLED displays with Absolute Black backgrounds and glassmorphic UI elements.
+- **Premium Onboarding**: Revamped Splash Screen with fluid scale-and-fade animations and modernized Auth flows.
+- **Integrated Health Suite**: Track your wellness journey with precision and style.
 
-## 📦 Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/MUKHTAR/HealthyMode-master.git
-   ```
-2. Open in **Android Studio Hedgehog** (or newer).
-3. Sync Gradle and run on an **Android 15** emulator/device.
+## 🚀 Technical Highlights
 
-## 🔨 Build Instructions
-To generate production binaries:
-```powershell
-./gradlew assembleRelease  # For APK
-./gradlew bundleRelease    # For AAB
-```
+- **Framework**: Native Android (Kotlin & XML)
+- **Architecture**: MVVM with Hilt Dependency Injection
+- **Database**: Room for secure, local data persistence
+- **Build System**: Gradle 8.x with KSP and Kapt processors
+- **Min SDK**: 24 (Android 7.0)
+- **Target SDK**: 35 (Android 15)
 
-## 🤝 Contributing
-Join the elite. We welcome contributions that push the boundaries of health technology. Please follow our high-standard code of conduct.
+## 📦 Build Artifacts
 
-## 📜 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **APK**: [app-debug.apk](https://github.com/gideongeny/Vitalis/blob/main/app/build/outputs/apk/debug/app-debug.apk)
+- **AAB**: [app-debug.aab](https://github.com/gideongeny/Vitalis/blob/main/app/build/outputs/bundle/debug/app-debug.aab)
 
 ---
-**VITALIS** - *Redefining Human Potential for 2026.*
+**Vitalis** - *Redefining Human Potential.*

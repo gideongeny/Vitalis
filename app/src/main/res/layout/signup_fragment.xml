@@ -1,146 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="15dp"
+        android:padding="24dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Account"
+            android:textColor="@color/on_background"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-black"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Join the Vitalis Community"
+            android:textColor="@color/primary"
+            android:textSize="16sp"
+            android:layout_marginBottom="32dp"/>
 
         <EditText
             android:id="@+id/fullname"
             android:layout_width="match_parent"
-            android:layout_height="57dp"
-            android:layout_marginBottom="10dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/edit_text"
-            android:drawableLeft="@drawable/ic_baseline_person_24"
-            android:ems="18"
-            android:textColor="@color/black"
-            android:hint=" Full Name"
-            android:textColorHint="@color/dark_grey"
+            android:backgroundTint="@color/surface"
+            android:drawableStart="@drawable/baseline_person_24"
+            android:drawablePadding="12dp"
+            android:hint="Full Name"
+            android:textColor="@color/on_background"
+            android:textColorHint="@color/grey"
             android:inputType="textPersonName"
-            android:paddingLeft="15dp"
-            android:paddingRight="5dp"
-            android:textSize="17sp"
-            tools:ignore="HardcodedText" />
+            android:paddingStart="16dp"
+            android:textSize="16sp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
             android:weightSum="2">
+            
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="wrap_content"
-                app:boxStrokeColor="@color/dark_grey"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                app:boxCornerRadiusTopEnd="21dp"
-                app:boxCornerRadiusBottomEnd="21dp"
-                app:boxCornerRadiusBottomStart="21dp"
-                app:boxCornerRadiusTopStart="21dp"
-                android:layout_marginEnd="10dp"
-                >
+                android:layout_marginEnd="8dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary">
                 <AutoCompleteTextView
                     android:id="@+id/gender"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:inputType="none"
-                    android:textSize="17dp"
-                    android:text="Select Gender"/>
+                    android:textColor="@color/on_background"
+                    android:text="Gender"
+                    android:textSize="16sp"/>
             </com.google.android.material.textfield.TextInputLayout>
+
             <TextView
                 android:id="@+id/dob"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
                 android:layout_weight="1"
-                android:layout_height="57dp"
+                android:layout_marginStart="8dp"
                 android:background="@drawable/edit_text"
-                android:drawableLeft="@drawable/ic_baseline_date_range_24"
-                android:hint=" DATE OF BIRTH"
-                android:inputType=""
-                android:gravity="left|center"
-                android:paddingLeft="15dp"
-                android:layout_gravity="center_vertical"
-                android:paddingRight="5dp"
-                tools:ignore="Autofill,HardcodedText,RtlHardcoded,RtlSymmetry,UseCompatTextViewDrawableXml" />
+                android:backgroundTint="@color/surface"
+                android:drawableStart="@drawable/ic_baseline_date_range_24"
+                android:drawablePadding="12dp"
+                android:gravity="center_vertical"
+                android:hint="DOB"
+                android:paddingStart="16dp"
+                android:textColor="@color/on_background"
+                android:textColorHint="@color/grey"
+                android:textSize="16sp" />
         </LinearLayout>
-
-
-        <EditText
-            android:id="@+id/email"
-            android:layout_width="match_parent"
-            android:layout_height="57dp"
-            android:layout_marginTop="10dp"
-            android:autofillHints="emailAddress"
-            android:background="@drawable/edit_text"
-            android:drawableLeft="@drawable/ic_baseline_email_24"
-            android:ems="10"
-            android:hint=" Email address"
-            android:inputType="textEmailAddress"
-            android:paddingLeft="15dp"
-            android:paddingRight="5dp"
-            android:textSize="17sp" />
-
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="57dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/edit_text"
-            android:drawableStart="@drawable/ic_baseline_lock_24"
-            android:ems="20"
-            android:hint=" Password"
-            android:inputType="textPassword"
-            android:paddingLeft="15dp"
-            android:paddingRight="5dp"
-            android:textSize="17sp" />
 
         <EditText
             android:id="@+id/phone"
             android:layout_width="match_parent"
-            android:layout_height="57dp"
-            android:layout_marginTop="15dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/edit_text"
+            android:backgroundTint="@color/surface"
             android:drawableStart="@drawable/ic_baseline_phone_24"
-            android:ems="10"
-            android:visibility="gone"
+            android:drawablePadding="12dp"
             android:hint="Phone Number"
-            android:inputType="phone|number"
-            android:paddingStart="15dp"
-            android:paddingEnd="5dp"
-            android:textSize="17sp" />
+            android:textColor="@color/on_background"
+            android:textColorHint="@color/grey"
+            android:inputType="phone"
+            android:paddingStart="16dp"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/edit_text"
+            android:backgroundTint="@color/surface"
+            android:drawableStart="@drawable/ic_baseline_email_24"
+            android:drawablePadding="12dp"
+            android:hint="Email Address"
+            android:textColor="@color/on_background"
+            android:textColorHint="@color/grey"
+            android:inputType="textEmailAddress"
+            android:paddingStart="16dp"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/edit_text"
+            android:backgroundTint="@color/surface"
+            android:drawableStart="@drawable/ic_baseline_lock_24"
+            android:drawablePadding="12dp"
+            android:hint="Password"
+            android:textColor="@color/on_background"
+            android:textColorHint="@color/grey"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:textSize="16sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/signupbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:background="@drawable/btn"
-        android:paddingStart="100dp"
-        android:paddingEnd="100dp"
-        android:text="register"
-        android:textColor="@color/white"
-        android:textSize="20sp"
+        android:backgroundTint="@color/primary"
+        android:text="Register"
+        android:textAllCaps="false"
+        android:textColor="@color/on_primary"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.163"
-        tools:ignore="MissingConstraints" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintVertical_bias="0.3" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
