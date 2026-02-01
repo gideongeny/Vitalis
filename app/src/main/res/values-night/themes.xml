@@ -1,0 +1,21 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.HealthyMode" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorPrimaryContainer">@color/surface</item>
+        <item name="colorOnPrimaryContainer">@color/primary</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:windowBackground">@color/background</item>
+        
+        <!-- Customize your theme here. -->
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.App.HeadlineMedium</item>
+    </style>
+</resources>

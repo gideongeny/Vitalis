@@ -1,0 +1,111 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
+    id 'com.google.devtools.ksp'
+}
+
+
+android {
+    namespace 'com.example.HealthyMode'
+    compileSdk 35
+    
+    defaultConfig {
+        applicationId "com.example.HealthyMode"
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    kapt {
+        correctErrorTypes true
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:33.1.2')
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-database-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.firebaseui:firebase-ui-firestore:8.0.2'
+
+    // Location
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
+    implementation 'com.android.volley:volley:1.2.1'
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+
+    // UI Libraries
+    implementation 'com.mikhaellopez:circularprogressbar:3.1.0'
+    implementation 'com.airbnb.android:lottie:6.4.0'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    kapt 'com.github.bumptech.glide:compiler:4.16.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'
+
+    // Architecture Components
+    implementation "androidx.work:work-runtime-ktx:2.9.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1"
+    
+    // Room Database
+    implementation "androidx.room:room-runtime:2.6.1"
+    ksp "androidx.room:room-compiler:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"
+
+    // Lifecycle
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.8.4"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4"
+
+    // Utilities
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC3'
+    implementation 'androidx.fragment:fragment-ktx:1.8.2'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    
+    // Dagger Hilt
+    implementation "com.google.dagger:hilt-android:2.50"
+    kapt "com.google.dagger:hilt-compiler:2.50"
+
+    // Visuals
+    implementation 'com.github.po10cio:TimeLineView:1.0.2'
+    implementation 'com.robinhood.spark:spark:1.2.0'
+    implementation 'com.github.majorkik:SparkLineLayout:1.0.1'
+
+    implementation "androidx.paging:paging-runtime-ktx:3.3.1"
+    implementation "androidx.paging:paging-common-ktx:3.3.1"
+}
