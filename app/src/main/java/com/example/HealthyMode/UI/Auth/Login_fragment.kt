@@ -56,25 +56,26 @@ class Login_fragment():Fragment() {
 
             fAuth.signInWithEmailAndPassword(memail.text.toString(),mpassword.text.toString()).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    if(fAuth.currentUser!!.isEmailVerified){
-                        Toast.makeText(activity, "Logged in Successfully", Toast.LENGTH_SHORT)
-                            .show()
-                        startActivity(Intent(activity, Home_screen::class.java))
-                        activity!!.finish()
+                    val user = fAuth.currentUser
+                    user?.reload()?.addOnCompleteListener {
+                        if(user.isEmailVerified){
+                            Toast.makeText(activity, "Logged in Successfully", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(activity, Home_screen::class.java))
+                            activity!!.finish()
+                        } else {
+                            Toast.makeText(activity, "Email not verified. Check inbox.", Toast.LENGTH_LONG).show()
+                            user.sendEmailVerification().addOnSuccessListener {
+                                Toast.makeText(activity, "Verification email resent.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
-                    else{
-                        Toast.makeText(activity, "You did not verify your Email", Toast.LENGTH_LONG)
-                            .show()
-//                        progressBar.visibility=View.GONE
-                    }
-
                 } else {
                     Toast.makeText(
                         activity,
                         "Error ! " + task.exception!!.message,
                         Toast.LENGTH_SHORT
                     ).show()
-//                    progressBar.setVisibility(View.GONE)
+//                    progressBar.visibility(View.GONE)
                 }
             }
         }

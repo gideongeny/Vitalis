@@ -72,7 +72,7 @@ fun createuser(){
             }
             if (password.text.toString().isEmpty())
             {
-                password.error="Email is required"
+                password.error="Password is required"
                 return
             }
             if(ffullname.text.toString().isEmpty())
@@ -82,12 +82,14 @@ fun createuser(){
             }
             if (password.text.toString().length<6)
             {
-                password.error="password must be greater then 6 characters"
+                password.error="Password must be at least 6 characters"
                 return
             }
             progressBarDialog= ProgressDialog(requireContext())
-//            progressbar.visibility=View.VISIBLE
+            progressBarDialog!!.setMessage("Creating Account...")
+            progressBarDialog!!.setCancelable(false)
             progressBarDialog!!.show()
+            
             //create account on app
             fAuth.createUserWithEmailAndPassword(memail, mpassword).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -97,45 +99,44 @@ fun createuser(){
                     fuser!!.sendEmailVerification().addOnSuccessListener {
                         Toast.makeText(
                             activity,
-                            "Verification Email Has been Sent.\n Verify Your Email to use this app",
-                            Toast.LENGTH_SHORT
+                            "Verification link sent to $memail",
+                            Toast.LENGTH_LONG
                         ).show()
+                        
                         val intent:Intent= Intent(activity, MainAuthentication::class.java)
                         intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                         startActivity(intent)
                         activity!!.finish()
                     }.addOnFailureListener { e ->
-                        Log.d(
-                            TAG,
-                            "onFailure: Email not sent " + e.message
-                        )
-//                        progressbar.visibility=View.GONE
+                        Log.d(TAG, "onFailure: Email not sent " + e.message)
+                        Toast.makeText(activity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                         progressBarDialog!!.dismiss()
                     }
 
-
                     val currenuser=fAuth.currentUser!!.uid
                     val dob:TextView=root!!.findViewById(R.id.dob)
-//firestore data store
+                    
+                    //firestore data store
                     val usermap= hashMapOf(
                         "fullname" to ffullname.text.toString().trim(),
                         "email" to email.text.toString().trim(),
-                        "password" to password.text.toString().trim(),
                         "phone" to phone.text.toString().trim(),
                         "dob" to dob.text.toString().trim(),
                         "gender" to chn.toString().trim(),
+                        "uid" to currenuser
                     )
-                    db.collection("user").document(currenuser.toString()).set(usermap)
+                    
+                    db.collection("user").document(currenuser).set(usermap)
                         .addOnSuccessListener {
-                            ffullname.text.clear()
-                            email.text.clear()
-                            password.text.clear()
-                            phone.text.clear()
+                            Log.d(TAG, "User profile created in Firestore")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e(TAG, "Error creating user profile", e)
                         }
                 } else {
                     Toast.makeText(
                         activity,
-                        "Error ! " + task.exception!!.message,
+                        "Registration Failed: " + task.exception!!.message,
                         Toast.LENGTH_SHORT
                     ).show()
                     progressBarDialog!!.dismiss()
@@ -145,6 +146,7 @@ fun createuser(){
         catch (e:Exception)
         {
             Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+            progressBarDialog?.dismiss()
         }
     }
 //    register function
@@ -158,10 +160,10 @@ fun register(){
     val arrayAdapter=ArrayAdapter(requireContext(),R.layout.dropdown,gender)
      val chgen=root!!.findViewById<AutoCompleteTextView>(R.id.gender)
      chgen.setAdapter(arrayAdapter)
-    chgen.setOnItemClickListener { adapterView, view, i, l ->
+    chgen.setOnItemClickListener { adapterView, _, i, _ ->
         chn=adapterView.getItemAtPosition(i).toString()
     }
-//    chn=chgen.text.toString()
+
         val regbtn:Button=root!!.findViewById(R.id.signupbtn)
         regbtn.setOnClickListener{
             createuser()
@@ -175,16 +177,10 @@ fun register(){
 
         val dpd = DatePickerDialog(
             requireContext(),
-            { view, year, monthOfYear, dayOfMonth ->
+            { _, year, monthOfYear, dayOfMonth ->
                 val selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
                 val dob:TextView=root!!.findViewById(R.id.dob)
-                dob.text=(selectedDate.toString())
-                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
-                val theDate = sdf.parse(selectedDate)
-//                val selectedyear=theDate.year
-                val currentDate = sdf.parse(sdf.format(System.currentTimeMillis()))
-//                var currentYear =currentDate.year
-//                 age = (currentYear - selectedyear).toString()
+                dob.text=(selectedDate)
             },
             year,
             month,
