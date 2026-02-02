@@ -1,6 +1,6 @@
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/yourusername/HealthyMood/blob/main/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/yourusername/Vitalis/blob/main/LICENSE)
 
-The HealthyMood app is licensed under the MIT License.
+The Vitalis app is licensed under the MIT License.
 
 **MIT License**
 
