@@ -10,7 +10,7 @@
     android:id="@+id/title_text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:layout_constraintBottom_toTopOf="@id/logindetails"
+    app:layout_constraintBottom_toTopOf="@id/login_details"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     android:orientation="horizontal">
@@ -48,7 +48,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/logindetails"
+        android:id="@+id/login_details"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/vie_bg"
