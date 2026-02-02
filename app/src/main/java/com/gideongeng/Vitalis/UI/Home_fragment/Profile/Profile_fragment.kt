@@ -87,9 +87,11 @@ class profile_fragment : Fragment() {
                 startActivity(Intent(activity, Water::class.java))
             }
             layHeight.setOnClickListener {
+                if (requiresAuthentication("edit your height")) return@setOnClickListener
                 showHeightDialog()
             }
             layAge.setOnClickListener {
+                if (requiresAuthentication("edit your age")) return@setOnClickListener
                 showEditDialog("Age", 1, 120, binding.age.text.toString().toIntOrNull() ?: 20) { newValue ->
                     updateProfileField("dob", "01/01/${Calendar.getInstance().get(Calendar.YEAR) - newValue}")
                 }
@@ -316,6 +318,7 @@ class profile_fragment : Fragment() {
         }
         
         binding.layGender.setOnClickListener {
+            if (requiresAuthentication("edit your gender")) return@setOnClickListener
             showGenderDialog()
         }
     }
@@ -329,5 +332,22 @@ class profile_fragment : Fragment() {
             dialog.dismiss()
         }
         builder.show()
+    }
+
+    private fun requiresAuthentication(action: String): Boolean {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null || currentUser.isAnonymous) {
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Sign In Required")
+                .setMessage("To $action and save your progress, please sign in with an account.")
+                .setPositiveButton("Sign In") { _, _ ->
+                    startActivity(Intent(activity, MainAuthentication::class.java))
+                    requireActivity().finish()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+            return true
+        }
+        return false
     }
 }

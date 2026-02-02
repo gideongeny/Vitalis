@@ -23,6 +23,25 @@ To enable Google Sign-In, you must add your app's SHA-1 fingerprint to the Fireb
 
 **Current Web Client ID**: `204352382670-h5sd6cf81d6lt8golegqc1mnvd83n187.apps.googleusercontent.com`
 
+## 🔒 Authentication-Gated Features
+
+To encourage user engagement and data persistence, certain premium features require authentication:
+
+### Guest Mode (Anonymous Access)
+- ✅ View all health metrics
+- ✅ Track steps and water intake
+- ✅ Edit weight (stored locally)
+- ❌ Cannot edit age, gender, or height
+- ❌ No cloud synchronization
+
+### Authenticated Mode (Sign In Required)
+- ✅ Full profile editing (age, gender, height, weight)
+- ✅ Cloud data synchronization via Firebase
+- ✅ Cross-device access to health data
+- ✅ Persistent health history
+
+When a guest user attempts to edit age, gender, or height, they'll see a friendly prompt encouraging them to sign in for full access.
+
 ## 🚀 Technical Highlights
 
 - **Framework**: Native Android (Kotlin & XML)
