@@ -41,37 +41,34 @@ class AddWeight : Fragment() {
             add.setOnClickListener {
                 if (isInternetOn(requireContext())) {
                     addweight()
-                    weightv.visibility = View.GONE
-                    userDitails.addSnapshotListener { value, error ->
-                        if (value!!.exists() && !value.contains("height")) {
-                            height.visibility = View.VISIBLE
-                            val height = ft.value + (inch.value / 12)
-                            addh.setOnClickListener {
-                                if (isInternetOn(requireContext())) {
-                                    userDitails.update("height", height.toString())
-                                    startActivity(
-                                        Intent(
-                                            requireActivity(),
-                                            Home_screen::class.java
-                                        )
-                                    )
-                                    requireActivity().finish()
-                                } else {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Please Turn on your internet connection",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                    
+                    // Check if height exists
+                    userDitails.get().addOnSuccessListener { document ->
+                        if (document != null && document.exists()) {
+                            if (document.contains("height")) {
+                                // Height already exists, go home
+                                startActivity(Intent(requireActivity(), Home_screen::class.java))
+                                requireActivity().finish()
+                            } else {
+                                // Height missing, show height picker
+                                weightv.visibility = View.GONE
+                                height.visibility = View.VISIBLE
+                                addh.setOnClickListener {
+                                    if (isInternetOn(requireContext())) {
+                                        val hValue = ft.value + (inch.value.toFloat() / 12f)
+                                        userDitails.update("height", hValue.toString()).addOnSuccessListener {
+                                            startActivity(Intent(requireActivity(), Home_screen::class.java))
+                                            requireActivity().finish()
+                                        }
+                                    } else {
+                                        Toast.makeText(requireContext(), "Internet connection required", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
                             }
                         }
                     }
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Please Turn on your internet connection",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(), "Internet connection required", Toast.LENGTH_SHORT).show()
                 }
             }
         }

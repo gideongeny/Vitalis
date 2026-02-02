@@ -106,7 +106,7 @@ class Home_fragment : Fragment() {
                     reset()
                     true
                 }
-                foodNut.setOnClickListener {
+                calorieT.setOnClickListener {
                     startActivity(Intent(requireActivity(),Food_track::class.java))
                 }
             }
@@ -222,7 +222,7 @@ class Home_fragment : Fragment() {
             }
             updatewater()
         }
-        val reduceWater: AppCompatButton = binding.deletewater
+        val reduceWater: ImageButton = binding.deletewater
         reduceWater.setOnClickListener {
             if (binding.waterLevel.text.toString() == "0") {
                 binding.deletewater.isClickable = false
@@ -381,7 +381,7 @@ class Home_fragment : Fragment() {
     fun Getlatestweight() {
         binding.weight.text =
             Constant.loadData(requireContext(), "weight", "curr_w", "").toString()
-        binding.target.text = Constant.loadData(requireContext(), "weight", "loss", "0").toString()
+        // binding.target.text = Constant.loadData(requireContext(), "weight", "loss", "0").toString()
     }
 }
 

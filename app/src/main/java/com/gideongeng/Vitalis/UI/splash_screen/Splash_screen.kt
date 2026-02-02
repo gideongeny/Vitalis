@@ -52,20 +52,38 @@ class Splash_screen : AppCompatActivity() {
         Handler().postDelayed({
             val fAuth: FirebaseAuth = FirebaseAuth.getInstance()
             val user = fAuth.currentUser
+            
             if (user != null) {
-                user.reload().addOnCompleteListener {
-                    if (user.isEmailVerified) {
-                        startActivity(Intent(this, Home_screen::class.java))
-                        finish()
-                    } else {
-                        startActivity(Intent(this, MainAuthentication::class.java))
-                        finish()
+                // If user exists, reload and check verification ONLY if they are not anonymous
+                if (user.isAnonymous) {
+                    startActivity(Intent(this, Home_screen::class.java))
+                    finish()
+                } else {
+                    user.reload().addOnCompleteListener {
+                        if (user.isEmailVerified) {
+                            startActivity(Intent(this, Home_screen::class.java))
+                            finish()
+                        } else {
+                            // If not verified, we still go to Home because auth is now optional
+                            // They can verify later in Profile
+                            startActivity(Intent(this, Home_screen::class.java))
+                            finish()
+                        }
                     }
                 }
             } else {
-                startActivity(Intent(this, MainAuthentication::class.java))
-                finish()
+                // No user? Sign in anonymously so they can use the app immediately
+                fAuth.signInAnonymously().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        startActivity(Intent(this, Home_screen::class.java))
+                        finish()
+                    } else {
+                        // If anonymous auth fails, still go to Home but as a true guest (null user potential handle later)
+                        startActivity(Intent(this, Home_screen::class.java))
+                        finish()
+                    }
+                }
             }
-        }, 3500) // Longer delay for premium feel
+        }, 3500)
     }
 }

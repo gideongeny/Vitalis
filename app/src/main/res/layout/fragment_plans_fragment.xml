@@ -19,7 +19,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="Reminder"
-        android:textColor="@color/black"
+        android:textColor="@color/on_background"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -54,13 +54,15 @@
                 android:layout_marginTop="12dp"
                 android:layout_weight="1"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="10dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/glass_white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:src="@drawable/glass"
+                    app:tint="@color/primary"
                     android:layout_gravity="center|top"
                     android:layout_marginTop="15dp"
                     />
@@ -68,6 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Drink Water"
+                    android:textColor="#1A1B2E"
                     android:layout_gravity="bottom"
                     android:textAlignment="center"
                     tools:ignore="HardcodedText,RtlCompat"
@@ -83,7 +86,8 @@
                 android:layout_marginEnd="12dp"
                 android:layout_weight="1"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="10dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/glass_white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -91,6 +95,7 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:src="@drawable/food"
+                    app:tint="@color/primary"
                     android:layout_gravity="center|top"
                     android:layout_marginTop="15dp"
                     />
@@ -98,6 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Meal"
+                    android:textColor="#1A1B2E"
                     android:layout_gravity="bottom"
                     android:textAlignment="center"
                     tools:ignore="HardcodedText,RtlCompat"
@@ -113,13 +119,15 @@
                 android:layout_marginEnd="12dp"
                 android:layout_weight="1"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="10dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/glass_white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:src="@drawable/medicine"
+                    app:tint="@color/primary"
                     android:layout_gravity="center|top"
                     android:layout_marginTop="15dp"
                     />
@@ -127,6 +135,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Medicine"
+                    android:textColor="#1A1B2E"
                     android:layout_gravity="bottom"
                     android:textAlignment="center"
                     tools:ignore="HardcodedText,RtlCompat"
@@ -141,7 +150,8 @@
                 android:layout_marginEnd="12dp"
                 android:layout_weight="1"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="10dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/glass_white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -150,11 +160,13 @@
                     android:layout_height="60dp"
                     android:layout_gravity="center|top"
                     android:layout_marginTop="15dp"
+                    app:tint="@color/primary"
                     android:src="@drawable/sanitizer" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Sanitize Hand"
+                    android:text="Sanitize"
+                    android:textColor="#1A1B2E"
                     android:layout_gravity="bottom"
                     android:textAlignment="center"
                     tools:ignore="HardcodedText,RtlCompat"
@@ -171,7 +183,7 @@
         android:textAlignment="center"
         android:fontFamily="@font/alata"
         android:textSize="30sp"
-        android:textColor="@color/black"
+        android:textColor="@color/on_background"
         />
 
     <LinearLayout

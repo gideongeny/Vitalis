@@ -13,6 +13,7 @@ import dagger.hilt.android.HiltAndroidApp
 class HMApplicaton : Application() {
     override fun onCreate() {
         super.onCreate()
+        com.gideongeng.Vitalis.Ads.AdManager.initialize(this)
         FirebaseFirestore.getInstance().enableNetwork()
         FirebaseFirestore.getInstance().collection("user").get(Source.CACHE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

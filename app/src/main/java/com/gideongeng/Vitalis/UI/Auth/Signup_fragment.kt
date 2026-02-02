@@ -17,6 +17,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.gideongeng.Vitalis.R
+import com.gideongeng.Vitalis.UI.Home.Home_screen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -102,7 +103,7 @@ fun createuser(){
                             Toast.LENGTH_LONG
                         ).show()
                         
-                        val intent:Intent= Intent(activity, MainAuthentication::class.java)
+                        val intent:Intent= Intent(activity, Home_screen::class.java)
                         intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                         startActivity(intent)
                         activity!!.finish()

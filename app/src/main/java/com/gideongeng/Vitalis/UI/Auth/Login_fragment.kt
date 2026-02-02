@@ -19,10 +19,24 @@ import androidx.fragment.app.Fragment
 import com.gideongeng.Vitalis.R
 import com.gideongeng.Vitalis.UI.Home.Home_screen
 import com.google.android.material.textfield.TextInputLayout
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import java.util.concurrent.TimeUnit
 
 class Login_fragment():Fragment() {
     var root: View? = null
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private var verificationId: String? = null
+    private val RC_SIGN_IN = 9001
     @SuppressLint("UseRequireInsteadOfGet", "SetTextI18n")
     private fun createuserlog()
     {
@@ -34,9 +48,9 @@ class Login_fragment():Fragment() {
         val leftAnimation: Animation? = AnimationUtils.loadAnimation(activity, R.anim.left_right)
         val layemail:TextInputLayout=root!!.findViewById(R.id.tvemail)
         val laypass:TextInputLayout=root!!.findViewById(R.id.tvpass)
-        pass_error.animation=leftAnimation
-        layemail.animation=rightAnimation
-        laypass.animation=leftAnimation
+        pass_error.startAnimation(leftAnimation!!)
+        layemail.startAnimation(rightAnimation!!)
+        laypass.startAnimation(leftAnimation!!)
 
         val  fAuth: FirebaseAuth = FirebaseAuth.getInstance()
         try {
@@ -60,14 +74,11 @@ class Login_fragment():Fragment() {
                     user?.reload()?.addOnCompleteListener {
                         if(user.isEmailVerified){
                             Toast.makeText(activity, "Logged in Successfully", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(activity, Home_screen::class.java))
-                            activity!!.finish()
                         } else {
-                            Toast.makeText(activity, "Email not verified. Check inbox.", Toast.LENGTH_LONG).show()
-                            user.sendEmailVerification().addOnSuccessListener {
-                                Toast.makeText(activity, "Verification email resent.", Toast.LENGTH_SHORT).show()
-                            }
+                            Toast.makeText(activity, "Logged in. Please verify your email later.", Toast.LENGTH_LONG).show()
                         }
+                        startActivity(Intent(activity, Home_screen::class.java))
+                        activity!!.finish()
                     }
                 } else {
                     Toast.makeText(
@@ -149,7 +160,139 @@ class Login_fragment():Fragment() {
         root=inflater.inflate(R.layout.activity_login_fragment,container,false)
         userlog()
         forget()
+        setupSocialButtons()
+        setupGoogleSignIn()
         return root
+    }
+
+    private fun setupGoogleSignIn() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.vitalis_web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+    }
+
+    private fun setupSocialButtons() {
+        root!!.findViewById<View>(R.id.googleBtn).setOnClickListener {
+            signInWithGoogle()
+        }
+        root!!.findViewById<View>(R.id.phoneBtn).setOnClickListener {
+            showPhoneAuthDialog()
+        }
+        root!!.findViewById<View>(R.id.anonymousBtn).setOnClickListener {
+            signInAnonymously()
+        }
+    }
+
+    private fun signInAnonymously() {
+        FirebaseAuth.getInstance().signInAnonymously().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                onAuthSuccess()
+            } else {
+                Toast.makeText(activity, "Anonymous Sign-In Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun signInWithGoogle() {
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)!!
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                Toast.makeText(activity, "Google Sign-In Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                onAuthSuccess()
+            } else {
+                Toast.makeText(activity, "Firebase Google Auth Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showPhoneAuthDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_phone_auth, null)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog).setView(dialogView).create()
+        
+        val phoneInput = dialogView.findViewById<EditText>(R.id.phoneNumber)
+        val otpLayout = dialogView.findViewById<View>(R.id.otpLayout)
+        val otpInput = dialogView.findViewById<EditText>(R.id.otpCode)
+        val btn = dialogView.findViewById<Button>(R.id.actionButton)
+
+        btn.setOnClickListener {
+            if (otpLayout.visibility == View.GONE) {
+                val number = phoneInput.text.toString()
+                if (number.isNotEmpty()) {
+                    sendVerificationCode(number, dialogView, dialog)
+                }
+            } else {
+                val code = otpInput.text.toString()
+                if (code.isNotEmpty()) {
+                    verifyCode(code)
+                    dialog.dismiss()
+                }
+            }
+        }
+        dialog.show()
+    }
+
+    private fun sendVerificationCode(number: String, view: View, dialog: AlertDialog) {
+        val options = PhoneAuthOptions.newBuilder(FirebaseAuth.getInstance())
+            .setPhoneNumber(number)
+            .setTimeout(60L, TimeUnit.SECONDS)
+            .setActivity(requireActivity())
+            .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                    signInWithPhoneCredential(credential)
+                    dialog.dismiss()
+                }
+
+                override fun onVerificationFailed(e: com.google.firebase.FirebaseException) {
+                    Toast.makeText(activity, "Verification Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onCodeSent(id: String, token: PhoneAuthProvider.ForceResendingToken) {
+                    verificationId = id
+                    view.findViewById<View>(R.id.otpLayout).visibility = View.VISIBLE
+                    view.findViewById<Button>(R.id.actionButton).text = "Verify OTP"
+                }
+            }).build()
+        PhoneAuthProvider.verifyPhoneNumber(options)
+    }
+
+    private fun verifyCode(code: String) {
+        val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
+        signInWithPhoneCredential(credential)
+    }
+
+    private fun signInWithPhoneCredential(credential: PhoneAuthCredential) {
+        FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                onAuthSuccess()
+            } else {
+                Toast.makeText(activity, "Phone Sign-In Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun onAuthSuccess() {
+        Toast.makeText(activity, "Logged in Successfully", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(activity, Home_screen::class.java))
+        activity!!.finish()
     }
 
 }

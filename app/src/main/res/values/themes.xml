@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Vitalis 2026 World Class Theme. -->
-    <style name="Theme.HealthyMode" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.HealthyMode" parent="Theme.Material3.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorOnPrimary">@color/on_primary</item>
@@ -13,12 +13,15 @@
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/background</item>
-        <item name="android:windowBackground">@color/background</item>
+        <item name="android:windowBackground">@drawable/vitalis_gradient_bg</item>
         <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         
         <!-- Customize your theme here. -->
         <item name="textAppearanceHeadlineMedium">@style/TextAppearance.App.HeadlineMedium</item>
         <item name="textAppearanceTitleLarge">@style/TextAppearance.App.TitleLarge</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
     </style>
 
     <style name="TextAppearance.App.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
@@ -32,8 +35,14 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="themesplash" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="themesplash" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:windowBackground">@color/background</item>
         <item name="android:statusBarColor">@color/background</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="CustomAlertDialog" parent="Theme.Material3.Light.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/round_square</item>
+        <item name="android:backgroundTint">#FFFFFF</item>
     </style>
 </resources>

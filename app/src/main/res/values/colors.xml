@@ -1,41 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Vitalis 2026 World Class Palette -->
-    <color name="primary">#FF6B00</color> <!-- Vibrant Vitalis Orange -->
-    <color name="primary_variant">#CC5500</color>
+    <!-- Vitalis 2026 World Class Palette - Light Vibrant Blue Aesthetic -->
+    <color name="primary">#00A3FF</color> <!-- Electric Blue -->
+    <color name="primary_variant">#0077FF</color> 
     <color name="on_primary">#FFFFFF</color>
     
-    <color name="secondary">#1A1A1A</color> <!-- Deep Charcoal -->
-    <color name="secondary_variant">#000000</color>
-    <color name="on_secondary">#FF6B00</color>
+    <color name="secondary">#03DAC6</color> <!-- Teal Accent -->
+    <color name="secondary_variant">#018786</color>
+    <color name="on_secondary">#121212</color>
 
-    <color name="background">#000000</color> <!-- Absolute Black for OLED -->
-    <color name="surface">#121212</color> <!-- Elevated Surface -->
-    <color name="on_background">#FFFFFF</color>
-    <color name="on_surface">#E0E0E0</color>
+    <color name="background">#F0F8FF</color> <!-- Alice Blue (Light) -->
+    <color name="surface">#FFFFFF</color> <!-- Pure White Surface -->
+    <color name="on_background">#1A1B2E</color> <!-- Deep Blue-Grey Text (Not Black) -->
+    <color name="on_surface">#1A1B2E</color>
 
-    <color name="glass_white">#1AFFFFFF</color>
-    <color name="glass_border">#33FFFFFF</color>
+    <color name="glass_white">#CCFFFFFF</color> <!-- More opaque white for light mode -->
+    <color name="glass_blue">#1A00A3FF</color>
+    <color name="glass_border">#2600A3FF</color> <!-- Blue-ish border -->
+    <color name="glass_border_blue">#4D00A3FF</color>
     
-    <color name="error">#FF3D00</color>
-    <color name="success">#00E676</color>
+    <color name="error">#FF5252</color>
+    <color name="success">#00C853</color>
     <color name="warning">#FFD600</color>
 
-    <!-- Legacy Aliases for Build Compatibility & Consistency -->
-    <color name="purple_200">#FF9E80</color>
+    <!-- Legacy Aliases adjusted for Light Theme -->
+    <color name="purple_200">#BB86FC</color>
     <color name="purple_500">@color/primary</color>
     <color name="purple_700">@color/primary_variant</color>
-    <color name="teal_200">@color/success</color>
-    <color name="teal_700">@color/success</color>
+    <color name="teal_200">@color/secondary</color>
+    <color name="teal_700">@color/secondary_variant</color>
     <color name="orange">@color/primary</color>
     <color name="dark_orange">@color/primary</color>
-    <color name="dark_grey">#2C2C2C</color>
-    <color name="grey">#757575</color>
+    <color name="dark_grey">#F5F7FA</color> <!-- Lighter! -->
+    <color name="grey">#9E9E9E</color>
     <color name="transparent">#00000000</color>
     <color name="GREEN">@color/success</color>
     <color name="pbutton">@color/primary</color>
-    <color name="blue">#2979FF</color>
+    <color name="blue">#00A3FF</color>
     <color name="purple">#D500F9</color>
-    <color name="black">#FF000000</color>
+    <color name="black">@color/on_background</color> <!-- Alias to Deep Blue-Grey -->
     <color name="white">#FFFFFFFF</color>
 </resources>

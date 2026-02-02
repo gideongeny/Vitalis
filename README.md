@@ -1,15 +1,16 @@
-# Vitalis 2026
+# Vitalis 2026: World Class Health
 
-![Vitalis Logo](logo_vitalis.png)
+![Vitalis Logo](app/src/main/res/drawable/logo.png)
 
-Welcome to **Vitalis**, the world-class health and wellness platform for 2026. This application has been transformed from its legacy identity into a premium, OLED-ready experience designed for the next generation of health-conscious users.
+Welcome to **Vitalis**, the world-class health and wellness platform for 2026. This application has been fully transformed into a vibrant, premium experience designed for the next generation of health-conscious users.
 
 ## 🌟 Key Features
 
-- **Modern Aesthetic**: A complete visual overhaul using Material 3 with a vibrant Vitalis Orange and Deep Charcoal palette.
-- **Elite Performance**: Optimized for OLED displays with Absolute Black backgrounds and glassmorphic UI elements.
-- **Premium Onboarding**: Revamped Splash Screen with fluid scale-and-fade animations and modernized Auth flows.
-- **Integrated Health Suite**: Track your wellness journey with precision and style.
+- **Sky Blue Aesthetic**: A complete visual overhaul featuring a light, vibrant "Sky Blue Glass" theme. Gone are the dark backgrounds, replaced by airy gradients and clean white surfaces.
+- **Robust Step Tracking**: Hardware-grade tracking logic that is reboot-proof. Vitalis ensures every step is counted, even after device restarts, with automated cloud synchronization.
+- **Teal Medical Branding**: Unified brand identity featuring the modern Teal Medical Cross logo across the entire application.
+- **Premium Onboarding**: Revamped Splash Screen with fluid animations and modernized authentication flows.
+- **Health Suite**: Integrated tracking for Water, Steps, Calories, Weight, and Sleep with a sophisticated, easy-to-read interface.
 
 ## 🚀 Technical Highlights
 
@@ -22,8 +23,8 @@ Welcome to **Vitalis**, the world-class health and wellness platform for 2026. T
 
 ## 📦 Build Artifacts
 
-- **APK**: [app-debug.apk](https://github.com/gideongeny/Vitalis/blob/main/app/build/outputs/apk/debug/app-debug.apk)
-- **AAB**: [app-debug.aab](https://github.com/gideongeny/Vitalis/blob/main/app/build/outputs/bundle/debug/app-debug.aab)
+- **Release APK**: [app-release.apk](app/build/outputs/apk/release/app-release.apk)
+- **Release AAB**: [app-release.aab](app/build/outputs/bundle/release/app-release.aab)
 
 ---
 **Vitalis** - *Redefining Human Potential.*

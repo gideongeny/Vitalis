@@ -16,22 +16,25 @@ class Step_reset_BoardCast : BroadcastReceiver() {
     @SuppressLint("LongLogTag")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context?, p1: Intent?) {
-        val pre_step = Constant.loadData(context!!, "step_count", "total_step", "0")!!.toInt()
-        Constant.savedata(context, "step_count", "previous_step", pre_step.toString())
-        val step = Constant.loadData(context, "step_count", "total_step", "0")
-        val previoustotalstep =
-            Constant.loadData(context, "step_count", "previous_step", "0")!!.toInt() ?: 0
-        Log.d("TAG-------------------------------> ", "reset successfully")
-        val c_step = Math.abs(step!!.toInt() - previoustotalstep)
+        val totalSteps = Constant.loadData(context!!, "step_count", "total_step", "0")!!.toInt()
+        
+        // Reset Day Start
+        Constant.savedata(context, "step_count", "previous_step", totalSteps.toString())
+        
+        // Reset accumulated reboot steps for the new day
+        Constant.savedata(context, "step_count", "resets", "0")
+        Constant.savedata(context, "step_count", "last_sensor", totalSteps.toString())
+
+        Log.d("StepReset", "Counters reset successfully for new day")
+        
         val target = Constant.loadData(context, "myPrefs", "target", "1000").toString()
         val notification = NotificationCompat.Builder(context, "Stepcount")
-            .setContentTitle("Tracking steps...")
-            .setContentText("Current Steps : $c_step  Target Steps:$target")
+            .setContentTitle("New day! Tracking steps...")
+            .setContentText("Current Steps : 0  Target Steps: $target")
             .setSmallIcon(R.drawable.mainlogo)
             .setOngoing(true).setSilent(true)
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(1, notification.build())
-//        startForeground(1, notification.build())
     }
 }

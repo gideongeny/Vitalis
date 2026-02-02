@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -31,6 +32,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HealthyMode"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/> <!-- Placeholder: REPLACE WITH REAL APP ID -->
 
         <meta-data
             android:name="com.google.android.backup.AIzaSyA5FnESZUij_MIfgo58spWYPzCv7naZVL8"
@@ -102,6 +107,7 @@
             android:name=".Service.MyService"
             android:enabled="true"
             android:exported="false"
+            android:foregroundServiceType="health"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <service

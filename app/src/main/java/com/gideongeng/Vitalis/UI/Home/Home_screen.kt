@@ -23,6 +23,7 @@ import com.gideongeng.Vitalis.UI.Home_fragment.Plans_fragment
 import com.gideongeng.Vitalis.UI.Home_fragment.Profile.profile_fragment
 import com.gideongeng.Vitalis.UI.Home_fragment.Stats
 import com.gideongeng.Vitalis.Utils.Constant
+import com.gideongeng.Vitalis.Ads.AdManager
 import com.gideongeng.Vitalis.databinding.ActivityHomeScreenBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -44,9 +45,11 @@ class Home_screen : AppCompatActivity() {
     )
     private val REQUEST_CODE_PERMISSIONS = 11;
     public lateinit var buttonnav: BottomNavigationView
-    private var userDitails: DocumentReference = FirebaseFirestore.getInstance().collection("user").document(
-        FirebaseAuth.getInstance().currentUser!!.uid.toString()
-    )
+    private val userDitails: DocumentReference? by lazy {
+        FirebaseAuth.getInstance().currentUser?.uid?.let { uid ->
+            FirebaseFirestore.getInstance().collection("user").document(uid)
+        }
+    }
     private lateinit var binding: ActivityHomeScreenBinding
 
     @RequiresApi(VERSION_CODES.O)
@@ -55,6 +58,13 @@ class Home_screen : AppCompatActivity() {
         binding = ActivityHomeScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        
+        // Load AdMob Banner
+        AdManager.loadBanner(binding.adView)
+        
+        // Show Interstitial on start
+        AdManager.showInterstitial(this)
+
         checkpermission()
         binding.buttonnav.visibility = View.VISIBLE
         val Home_fragment = Home_fragment()
@@ -62,39 +72,44 @@ class Home_screen : AppCompatActivity() {
         val ProfileFragment = profile_fragment()
         val Weight = AddWeight()
         val Stats=Stats()
-        userDitails.collection("Weight track").get().addOnSuccessListener { snapshot ->
-            if (snapshot.isEmpty) {
-                binding.buttonnav.visibility = View.GONE
-                binding.pro.visibility=View.GONE
-                supportFragmentManager.beginTransaction().apply {
-                    add(R.id.frg, Weight)
-                    commit()
-                }
-            } else {
-                makeCurrentFrag(Home_fragment)
-                Getlatestweight()
-                KeyboardVisibilityEvent.setEventListener(
-                    this
-                ) { isOpen ->
-                    if (isOpen) {
-                        binding.buttonnav.visibility = View.INVISIBLE
-                    } else {
-                        binding.buttonnav.visibility = View.VISIBLE
+        if (userDitails == null) {
+            // Guest mode
+            makeCurrentFrag(Home_fragment)
+        } else {
+            userDitails?.collection("Weight track")?.get()?.addOnSuccessListener { snapshot ->
+                if (snapshot == null || snapshot.isEmpty) {
+                    binding.buttonnav.visibility = View.GONE
+                    binding.pro.visibility = View.GONE
+                    supportFragmentManager.beginTransaction().apply {
+                        add(R.id.frg, Weight)
+                        commit()
                     }
+                } else {
+                    makeCurrentFrag(Home_fragment)
+                    Getlatestweight()
                 }
-                binding.buttonnav.visibility = View.VISIBLE
-                buttonnav=binding.buttonnav
-                binding.buttonnav.setOnNavigationItemSelectedListener {
-                    when (it.itemId) {
-                        R.id.home_t -> makeCurrentFrag(Home_fragment)
-                        R.id.plan -> makeCurrentFrag(plansFragment)
-                        R.id.profile -> makeCurrentFrag(ProfileFragment)
-                        R.id.stats -> makeCurrentFrag(Stats)
+            } ?: makeCurrentFrag(Home_fragment)
+        }
 
-                    }
-                    true
-                }
+        KeyboardVisibilityEvent.setEventListener(
+            this
+        ) { isOpen ->
+            if (isOpen) {
+                binding.buttonnav.visibility = View.INVISIBLE
+            } else {
+                binding.buttonnav.visibility = View.VISIBLE
             }
+        }
+        binding.buttonnav.visibility = View.VISIBLE
+        buttonnav = binding.buttonnav
+        binding.buttonnav.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.home_t -> makeCurrentFrag(Home_fragment)
+                R.id.plan -> makeCurrentFrag(plansFragment)
+                R.id.profile -> makeCurrentFrag(ProfileFragment)
+                R.id.stats -> makeCurrentFrag(Stats)
+            }
+            true
         }
 ////        registerReceiver(BoardCast(), IntentFilter(BackupDataOutput.ACTION_RESTORE_COMPLETE))
 //        // Request a backup of the specific preference and key
@@ -102,13 +117,13 @@ class Home_screen : AppCompatActivity() {
 ////        backupManager.dataChanged("step_count")
 //
 ////    }
-        userDitails.collection("fitness").document("health_report")
-            .get().addOnSuccessListener { value ->
+        userDitails?.collection("fitness")?.document("health_report")
+            ?.get()?.addOnSuccessListener { value ->
                 if (value != null && value.exists()) {
                     val stat = value.data?.get("data").toString()
-                    Constant.savedata(this,"health","stats",stat.toString())
+                    Constant.savedata(this, "health", "stats", stat.toString())
                 }
-            }.addOnFailureListener {
+            }?.addOnFailureListener {
             }
         Reset_AT_12_AM.setNotification(this)
 }
@@ -166,10 +181,12 @@ class Home_screen : AppCompatActivity() {
 
     @RequiresApi(VERSION_CODES.O)
     fun Getlatestweight() {
-        userDitails.collection("Weight track").get().addOnSuccessListener { result ->
-            val size = result.documents.size
-            val curr_weight = result.documents[size - 1].get("weight").toString().toFloat()
-            Constant.savedata(this, "weight", "curr_w", curr_weight.toString())
+        userDitails?.collection("Weight track")?.get()?.addOnSuccessListener { result ->
+            if (result != null && !result.isEmpty) {
+                val size = result.documents.size
+                val curr_weight = result.documents[size - 1].get("weight").toString().toFloat()
+                Constant.savedata(this, "weight", "curr_w", curr_weight.toString())
+            }
         }
     }
 }

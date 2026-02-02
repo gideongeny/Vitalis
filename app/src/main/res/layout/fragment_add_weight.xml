@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/vitalis_gradient_bg"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".UI.Home.AddWeight">
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,12 +18,12 @@
             android:textSize="20sp"
             android:gravity="center"
             android:textAlignment="center"
-            android:textColor="@color/black"
+            android:textColor="@color/on_background"
             android:textStyle="bold"
             android:fontFamily="@font/allerta"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            tools:ignore="HardcodedText,M>issingConstraints,MissingConstraints,RtlCompat" />
+            tools:ignore="HardcodedText,MissingConstraints,RtlCompat" />
 
         <NumberPicker
             android:id="@+id/weight"
@@ -41,6 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Kg"
+            android:textColor="@color/on_background"
             android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/weight"

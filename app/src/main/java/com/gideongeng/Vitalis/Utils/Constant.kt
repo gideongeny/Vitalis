@@ -81,10 +81,16 @@ object Constant {
     }
 
     fun isInternetOn(context: Context): Boolean {
-        val conncectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val netinfo = conncectivityManager.activeNetworkInfo
-        return netinfo != null && netinfo.isConnected
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+            return capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } else {
+            @Suppress("DEPRECATION")
+            val netInfo = connectivityManager.activeNetworkInfo
+            return netInfo != null && netInfo.isConnected
+        }
     }
 
     fun Lineplot(lineChart: LineChart, entries: ArrayList<Entry>, key: Boolean) {

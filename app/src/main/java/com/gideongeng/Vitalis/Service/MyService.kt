@@ -55,10 +55,15 @@ class MyService : Service(), SensorEventListener {
         } catch (e: Exception) {
             Toast.makeText(this, e.message.toString(), Toast.LENGTH_SHORT).show()
         }
-        val step = Constant.loadData(this, "step_count", "total_step", "0")
-        val previoustotalstep =
-            Constant.loadData(this, "step_count", "previous_step", "0")!!.toInt() ?: 0
-        val c_step = abs(step!!.toInt() - previoustotalstep!!)
+        val stepString = Constant.loadData(this, "step_count", "total_step", "0") ?: "0"
+        val previousStepString = Constant.loadData(this, "step_count", "previous_step", "0") ?: "0"
+        val totalStepsResets = Constant.loadData(this, "step_count", "resets", "0") ?: "0"
+        
+        val total_s = stepString.toInt()
+        val prev_s = previousStepString.toInt()
+        val resets_acc = totalStepsResets.toInt()
+
+        val c_step = abs(total_s - prev_s) + resets_acc
         val target = Constant.loadData(this, "myPrefs", "target", "1000").toString()
         if (Constant.isInternetOn(applicationContext)) {
             dataupload(c_step.toString(), LocalDate.now().toString())
@@ -97,38 +102,56 @@ class MyService : Service(), SensorEventListener {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onSensorChanged(event: SensorEvent?) {
-        val total_steps = event!!.values[0]
-        Constant.savedata(this, "step_count", "total_step", total_steps.toInt().toString())
-        val previoustotalstep =
-            Constant.loadData(this, "step_count", "previous_step", "0")!!.toInt() ?: 0
-        totalsteps=Constant.loadData(this, "step_count", "total_step", "0")!!.toInt() ?: 0
-        val currsteps = totalsteps.toInt() - previoustotalstep!!
-//        step = "$currsteps"
+        val total_steps = event!!.values[0].toInt()
+        
+        // Load persistent data
+        var previoustotalstep = Constant.loadData(this, "step_count", "previous_step", "0")!!.toInt()
+        var lastSensorValue = Constant.loadData(this, "step_count", "last_sensor", "0")!!.toInt()
+        var resets = Constant.loadData(this, "step_count", "resets", "0")!!.toInt()
+
+        // Detect Reboot/Sensor Reset
+        if (total_steps < lastSensorValue) {
+            // Sensor reset occurred (reboot). Add the last known value to resets.
+            resets += lastSensorValue
+            Constant.savedata(this, "step_count", "resets", resets.toString())
+        }
+
+        // Save current sensor value for next change detection
+        Constant.savedata(this, "step_count", "last_sensor", total_steps.toString())
+        Constant.savedata(this, "step_count", "total_step", total_steps.toString())
+
+        // Calculate current steps: (Current - DayStart) + Accumulated from reboots
+        var currsteps = (total_steps - previoustotalstep) + resets
+        if (currsteps < 0) currsteps = total_steps // Fallback for edge cases
+
         val target = Constant.loadData(this, "myPrefs", "target", "1000").toString()
         val curr_date = LocalDate.now().toString()
+        
         if (Constant.isInternetOn(applicationContext)) {
             dataupload(currsteps.toString(), curr_date)
         }
-        notificationManager!!.notify(1,
-            notification!!.setContentText("Current Steps : $currsteps  Target Steps:$target")
+        
+        notificationManager.notify(1,
+            notification.setContentText("Current Steps : $currsteps  Target Steps: $target")
                 .build()
         )
-        startForeground(1, notification!!.build())
+        startForeground(1, notification.build())
     }
-
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-    }
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun dataupload(currsteps: String, curr_date: String) {
         val steps = hashMapOf(
-            "steps" to currsteps.toString(),
-            "date" to curr_date.toString()
+            "steps" to currsteps,
+            "date" to curr_date
         )
-        val curruser = FirebaseAuth.getInstance().currentUser!!.uid
-        FirebaseFirestore.getInstance().collection("user").document(curruser.toString())
-            .collection("steps").document(curr_date.toString()).set(steps)
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            FirebaseFirestore.getInstance().collection("user").document(user.uid)
+                .collection("steps").document(curr_date).set(steps)
+        }
     }
 
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        // No action needed for accuracy changes
+    }
 }
