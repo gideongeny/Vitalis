@@ -111,14 +111,42 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/name" />
 
-                <ImageView
-                    android:id="@+id/weather"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/profile_card"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/sun"
+                    app:cardCornerRadius="24dp"
+                    app:cardBackgroundColor="@color/secondary"
+                    app:cardElevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="parent">
+                    <TextView
+                        android:id="@+id/p_initial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="U"
+                        android:textColor="@color/white"
+                        android:layout_gravity="center"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/p_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"/>
+                </androidx.cardview.widget.CardView>
+
+                <ImageView
+                    android:id="@+id/weather"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/sun"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintEnd_toStartOf="@id/profile_card"
+                    app:layout_constraintTop_toTopOf="@id/profile_card"
+                    app:layout_constraintBottom_toBottomOf="@id/profile_card" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

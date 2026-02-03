@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.bumptech.glide.Glide
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -80,8 +81,15 @@ class Home_fragment : Fragment() {
 //        try {
             dialog = Dialog(requireActivity())
             val currentUser = FirebaseAuth.getInstance().currentUser
-            if (currentUser != null && !currentUser.isAnonymous && currentUser.displayName != null) {
-                binding.name.text = currentUser.displayName
+            if (currentUser != null && !currentUser.isAnonymous) {
+                binding.name.text = currentUser.displayName ?: "User"
+                binding.pInitial.text = binding.name.text[0].uppercase().toString()
+                
+                currentUser.photoUrl?.let {
+                    Glide.with(this).load(it).into(binding.pImg)
+                    binding.pImg.visibility = View.VISIBLE
+                    binding.pInitial.visibility = View.GONE
+                }
             }
 
             userDitails.addSnapshotListener { value, error ->
@@ -101,20 +109,31 @@ class Home_fragment : Fragment() {
             addfood()
             addTarget()
             binding.apply {
+                profileCard.setOnClickListener {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, profile_fragment())
+                        .addToBackStack(null)
+                        .commit()
+                }
+
                 weightButton.setOnClickListener {
-                startActivity(Intent(requireActivity(), weight_track::class.java))
-            }
+                    if (requiresAuthentication("track your weight")) return@setOnClickListener
+                    startActivity(Intent(requireActivity(), weight_track::class.java))
+                }
                 mealrem.setOnClickListener {
+                    if (requiresAuthentication("manage meal reminders")) return@setOnClickListener
                     startActivity(Intent(requireActivity(), MealReminder::class.java))
                 }
                 circularProgressBar.setOnClickListener {
                     Toast.makeText(activity, "Long tap to reset steps", Toast.LENGTH_SHORT).show()
                 }
                 circularProgressBar.setOnLongClickListener {
+                    if (requiresAuthentication("reset steps")) return@setOnLongClickListener true
                     reset()
                     true
                 }
                 calorieT.setOnClickListener {
+                    if (requiresAuthentication("track your calories")) return@setOnClickListener
                     startActivity(Intent(requireActivity(),Food_track::class.java))
                 }
             }
@@ -206,6 +225,7 @@ class Home_fragment : Fragment() {
             }
 
         binding.addwater.setOnClickListener {
+            if (requiresAuthentication("track your water intake")) return@setOnClickListener
             binding.deletewater.isClickable = true
             binding.deletewater.setBackgroundResource(R.drawable.baseline_remove_circle_outline_24)
             no_glass = no_glass?.plus(1)
@@ -232,6 +252,7 @@ class Home_fragment : Fragment() {
         }
         val reduceWater: ImageButton = binding.deletewater
         reduceWater.setOnClickListener {
+            if (requiresAuthentication("track your water intake")) return@setOnClickListener
             if (binding.waterLevel.text.toString() == "0") {
                 binding.deletewater.isClickable = false
                 binding.deletewater.setBackgroundResource(R.drawable.disable_remove)
@@ -305,6 +326,7 @@ class Home_fragment : Fragment() {
     //    add your daily meal
     private fun addfood() {
         binding.addFood.setOnClickListener {
+            if (requiresAuthentication("log your food")) return@setOnClickListener
             val intent = Intent(activity, Add_food::class.java)
             startActivity(intent)
         }
@@ -347,6 +369,7 @@ class Home_fragment : Fragment() {
         val burn_cal = binding.burnCal
         burn_cal.progressMax = save_burn.toFloat()
         burn_cal.setOnLongClickListener {
+            if (requiresAuthentication("set calorie targets")) return@setOnLongClickListener true
             dialog.show()
             val save = Constant.loadData(requireContext(), "calorie", "burn", "100").toString()
             burn_target.value = Constant.calorieburn.indexOf(save)
@@ -390,6 +413,22 @@ class Home_fragment : Fragment() {
         binding.weight.text =
             Constant.loadData(requireContext(), "weight", "curr_w", "").toString()
         // binding.target.text = Constant.loadData(requireContext(), "weight", "loss", "0").toString()
+    }
+
+    private fun requiresAuthentication(action: String): Boolean {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null || currentUser.isAnonymous) {
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Sign In Required")
+                .setMessage("To $action and save your progress, please sign in with an account.")
+                .setPositiveButton("Sign In") { _, _ ->
+                    startActivity(Intent(activity, MainAuthentication::class.java))
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+            return true
+        }
+        return false
     }
 }
 

@@ -36,6 +36,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.bumptech.glide.Glide
 import java.text.DecimalFormat
 import java.time.LocalDate
 import java.util.*
@@ -68,6 +69,26 @@ class profile_fragment : Fragment() {
         getlocation ()
         return binding.root
     }
+    private fun updateBmiStatus(bm: Double) {
+        if (bm < 18.5) {
+            binding.measure.text = "You are underweight"
+            binding.measure.setBackgroundResource(R.drawable.glass_rounded_12)
+            binding.measure.setTextColor(Color.parseColor("#FFD600"))
+        } else if (bm < 29.9 && bm > 25.0) {
+            binding.measure.text = "You are Overweight"
+            binding.measure.setBackgroundResource(R.drawable.glass_rounded_12)
+            binding.measure.setTextColor(Color.parseColor("#FF3D00"))
+        } else if (bm > 30.0) {
+            binding.measure.text = "You are Obese Range"
+            binding.measure.setBackgroundResource(R.drawable.glass_rounded_12)
+            binding.measure.setTextColor(Color.parseColor("#FF3D00"))
+        } else {
+            binding.measure.text = "You are Normal and Healthy"
+            binding.measure.setBackgroundResource(R.drawable.glass_rounded_12)
+            binding.measure.setTextColor(Color.parseColor("#00E676"))
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -97,15 +118,45 @@ class profile_fragment : Fragment() {
                 }
             }
             layWeight.setOnClickListener {
+                if (requiresAuthentication("edit your weight")) return@setOnClickListener
                 showEditDialog("Weight (kg)", 20, 250, binding.edweight.text.toString().toIntOrNull() ?: 70) { newValue ->
                     Constant.savedata(requireActivity(), "weight", "curr_w", newValue.toString())
                     binding.edweight.text = newValue.toString()
-                    UserDetails() // Recalculate BMI
+                    updateProfileField("weight", newValue.toString())
                 }
             }
+            
             val currentUser = FirebaseAuth.getInstance().currentUser
             logout.setOnClickListener {
                 handleLogout(currentUser)
+            }
+
+            layGender.setOnClickListener {
+                if (requiresAuthentication("edit your gender")) return@setOnClickListener
+                showGenderDialog()
+            }
+
+            measure.setOnClickListener {
+                if (requiresAuthentication("update your stats")) return@setOnClickListener
+                showHeightDialog()
+            }
+        }
+
+        viewModel.getHeight()
+        viewModel.data.observe(viewLifecycleOwner){ state->
+            when (state){
+                is UIstate.Loading -> {
+                    binding.mainContent.visibility=View.GONE
+                    binding.progressBar.visibility=View.VISIBLE
+                }
+                is UIstate.Failure -> {
+                    Toast.makeText(requireContext(), state.error.toString(), Toast.LENGTH_SHORT).show()
+                }
+                is UIstate.Success -> {
+                    binding.mainContent.visibility=View.VISIBLE
+                    binding.progressBar.visibility=View.GONE
+                    binding.edhight.text=state.data.toString()
+                }
             }
         }
     }
@@ -125,14 +176,15 @@ class profile_fragment : Fragment() {
                 {
                     val geocoder = Geocoder(requireActivity(), Locale.getDefault())
                     val addresses = geocoder.getFromLocation(currentLocation.latitude, currentLocation.longitude, 1)
-                    val address = addresses!![0]
-                    val land=address.subLocality
-                    val state = address.adminArea
-                    val country = address.countryName
-//                    val district = address.subAdminArea
-                    val locationName = address.locality
-                    val FullAddress = "$land,$locationName,$state,$country"
-                    binding.locat.text=FullAddress
+                    if (!addresses.isNullOrEmpty()) {
+                        val address = addresses[0]
+                        val land = address.subLocality ?: ""
+                        val state = address.adminArea ?: ""
+                        val country = address.countryName ?: ""
+                        val locationName = address.locality ?: ""
+                        val FullAddress = "$land,$locationName,$state,$country"
+                        binding.locat.text = FullAddress
+                    }
                 }
             }.addOnFailureListener {
                     exception->
@@ -151,16 +203,17 @@ class profile_fragment : Fragment() {
         val add: AppCompatButton = dialog.findViewById(R.id.add)
         ft.minValue = 3
         ft.maxValue = 8
-        ft.value = floor(height).toInt()
+        ft.value = 5 // Default
         ft.wrapSelectorWheel = true
         inch.minValue = 1
         inch.maxValue = 12
-        inch.value = round((height - floor(height)) * 12).toInt()
+        inch.value = 6 // Default
         inch.wrapSelectorWheel = true
         add.setOnClickListener {
             var heightVal = ft.value.toDouble() + (inch.value.toDouble() / 12)
             heightVal = df.format(heightVal).toDouble()
             viewModel.updateHeight(heightVal.toString(), requireContext())
+            updateProfileField("height", heightVal.toString())
             dialog.dismiss()
         }
         dialog.show()
@@ -206,6 +259,7 @@ class profile_fragment : Fragment() {
             act.finish()
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     fun UserDetails()
@@ -218,7 +272,7 @@ class profile_fragment : Fragment() {
             binding.age.text = "N/A"
             binding.Gender.text = "N/A"
             binding.loginCard.visibility = View.VISIBLE
-            binding.logout.visibility = View.GONE // Hide logout for Guests
+            binding.logout.visibility = View.GONE
             binding.loginBtn.setOnClickListener {
                 startActivity(Intent(activity, MainAuthentication::class.java))
                 requireActivity().finish()
@@ -233,11 +287,16 @@ class profile_fragment : Fragment() {
                 requireActivity().finish()
             }
 
-            // Fallback to Firebase Auth data if Firestore hasn't synced yet
             binding.username.text = currentUser.displayName ?: "User"
             binding.email.text = currentUser.email ?: ""
             if (binding.username.text.isNotEmpty()) {
                 binding.tvLet.text = binding.username.text[0].uppercase().toString()
+            }
+            
+            currentUser.photoUrl?.let {
+                Glide.with(this).load(it).into(binding.profile_img)
+                binding.profile_img.visibility = View.VISIBLE
+                binding.tvLet.visibility = View.GONE
             }
 
             userDitails?.addSnapshotListener { it, error ->
@@ -245,6 +304,8 @@ class profile_fragment : Fragment() {
                 if (it != null && it.exists()) {
                     val fullname = it.data?.get("fullname")?.toString()
                     val email = it.data?.get("email")?.toString()
+                    val genderVal = it.data?.get("gender")?.toString() ?: "N/A"
+                    val heightVal = it.data?.get("height")?.toString() ?: "0"
                     
                     if (!fullname.isNullOrEmpty() && fullname != "null") {
                         binding.username.text = fullname
@@ -253,6 +314,9 @@ class profile_fragment : Fragment() {
                     if (!email.isNullOrEmpty() && email != "null") {
                         binding.email.text = email
                     }
+                    
+                    binding.Gender.text = genderVal
+                    binding.edhight.text = heightVal
 
                     val dob = it.data?.get("dob").toString()
                     if (dob.length >= 4 && dob != "null") {
@@ -266,76 +330,21 @@ class profile_fragment : Fragment() {
                     } else {
                         binding.age.text = "N/A"
                     }
-                    binding.Gender.text = it.data?.get("gender").toString()
-                }
-            }
-        }
-        viewModel.getHeight()
-        viewModel.data.observe(requireActivity()){ state->
-            when (state){
-                is UIstate.Loading -> {
-                    binding.mainContent.visibility=View.GONE
-                    binding.progressBar.visibility=View.VISIBLE
-                }
-                is UIstate.Failure -> {
-                    Toast.makeText(requireContext(), state.error.toString(), Toast.LENGTH_SHORT).show()
-                }
-                is UIstate.Success -> {
-                    binding.mainContent.visibility=View.VISIBLE
-                    binding.progressBar.visibility=View.GONE
-                    binding.edhight.text=state.data.toString()
-                }
-            }
-        }
-        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
-        if (currentUserUid != null) {
-            val reference = FirebaseFirestore.getInstance().collection("user").document(currentUserUid)
-            reference.addSnapshotListener { it, e ->
-                if (e != null) return@addSnapshotListener
-                if (it != null && it.exists()) {
-                    var heightf = it.data!!["height"]?.toString()?.toDouble() ?: 0.0
-                    height = heightf
-                    heightf *= 0.305
-                    var Bmi: String = "0"
-                    val weight = Constant.loadData(requireActivity(), "weight", "curr_w", "0").toString().toDouble()
-                    if (weight == 0.0 || heightf == 0.0) {
-                        Bmi = "0"
+
+                    val weightVal = Constant.loadData(requireActivity(), "weight", "curr_w", "0").toString().toDouble()
+                    val heightNum = heightVal.toDoubleOrNull() ?: 0.0
+                    val heightMeters = heightNum * 0.305
+                    
+                    if (weightVal > 0 && heightMeters > 0) {
+                        val bmiVal = Math.round(weightVal / (heightMeters * heightMeters)).toString()
+                        binding.bmi.text = bmiVal
+                        updateBmiStatus(bmiVal.toDouble())
                     } else {
-                        Bmi = Math.round(((weight / (heightf * heightf))).toDouble())
-                            .toString()
+                        binding.bmi.text = "0.0"
+                        binding.measure.text = "Enter details for BMI"
                     }
-                    binding.bmi.text = Bmi
-                    var bm = Bmi.toDouble()
-                    if (bm < 18.5) {
-                        binding.measure.text = "You are underweight"
-                        binding.measure.setBackgroundResource(R.drawable.glass_rounded_12)
-                        binding.measure.setTextColor(Color.parseColor("#FFD600")) // Warning yellow
-                    } else if (bm < 29.9 && bm > 25.0) {
-                        binding.measure.text = "You are Overweight"
-                        binding.measure.setBackgroundResource(R.drawable.glass_rounded_12)
-                        binding.measure.setTextColor(Color.parseColor("#FF3D00")) // Error orange
-                    } else if (bm > 30.0) {
-                        binding.measure.text = "You are Obese Range"
-                        binding.measure.setBackgroundResource(R.drawable.glass_rounded_12)
-                        binding.measure.setTextColor(Color.parseColor("#FF3D00"))
-                    } else {
-                        binding.measure.text = "You are Normal and Healthy"
-                        binding.measure.setBackgroundResource(R.drawable.glass_rounded_12)
-                        binding.measure.setTextColor(Color.parseColor("#00E676")) // Success green
-                    }
-                } else {
-                    // Guest or no data
-                    binding.bmi.text = "0.0"
-                    binding.measure.text = "Enter details to see BMI"
-                    binding.measure.setBackgroundResource(R.drawable.glass_rounded_12)
-                    height = 0.0
                 }
             }
-        }
-        
-        binding.layGender.setOnClickListener {
-            if (requiresAuthentication("edit your gender")) return@setOnClickListener
-            showGenderDialog()
         }
     }
 
