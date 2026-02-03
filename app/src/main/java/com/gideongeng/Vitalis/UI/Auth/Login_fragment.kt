@@ -196,6 +196,10 @@ class Login_fragment():Fragment() {
     }
 
     private fun signInWithGoogle() {
+        // Diagnostic: Verify the Web Client ID being used
+        val clientId = getString(R.string.vitalis_web_client_id)
+        android.util.Log.d("VITALIS_AUTH", "Starting Google Sign-In with Web Client ID: $clientId")
+        
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
@@ -208,7 +212,14 @@ class Login_fragment():Fragment() {
                 val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
-                Toast.makeText(activity, "Google Sign-In Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                val statusCode = e.statusCode
+                val message = "Google Sign-In Failed (Code $statusCode): ${e.message}"
+                android.util.Log.e("VITALIS_AUTH", message, e)
+                Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
+                
+                if (statusCode == 10) {
+                    Toast.makeText(activity, "Error 10: Usually means SHA-1 MISMATCH or Support Email missing in Firebase.", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }

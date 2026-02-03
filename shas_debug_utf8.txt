@@ -1,0 +1,15 @@
+﻿
+Variant: debug
+SHA1: 3E:E9:17:26:E5:
+2E:47:B3:9C:F7:61:DB:
+85:64:01:1F:42:20:BD:
+CC
+Variant: release
+Variant: 
+debugAndroidTest
+SHA1: 3E:E9:17:26:E5:
+2E:47:B3:9C:F7:61:DB:
+85:64:01:1F:42:20:BD:
+CC
+
+
