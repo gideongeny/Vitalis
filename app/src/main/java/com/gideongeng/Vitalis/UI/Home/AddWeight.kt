@@ -42,33 +42,56 @@ class AddWeight : Fragment() {
                 if (isInternetOn(requireContext())) {
                     addweight()
                     
-                    // Check if height exists
-                    userDitails.get().addOnSuccessListener { document ->
-                        if (document != null && document.exists()) {
-                            if (document.contains("height")) {
-                                // Height already exists, go home
-                                startActivity(Intent(requireActivity(), Home_screen::class.java))
-                                requireActivity().finish()
-                            } else {
-                                // Height missing, show height picker
-                                weightv.visibility = View.GONE
-                                height.visibility = View.VISIBLE
-                                addh.setOnClickListener {
-                                    if (isInternetOn(requireContext())) {
-                                        val hValue = ft.value + (inch.value.toFloat() / 12f)
-                                        userDitails.update("height", hValue.toString()).addOnSuccessListener {
-                                            startActivity(Intent(requireActivity(), Home_screen::class.java))
-                                            requireActivity().finish()
-                                        }
-                                    } else {
-                                        Toast.makeText(requireContext(), "Internet connection required", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            }
+                    val currentUser = FirebaseAuth.getInstance().currentUser
+                    if (currentUser == null || currentUser.isAnonymous) {
+                        // Guest user: skip Firestore sync check and go home
+                        Toast.makeText(requireContext(), "Weight saved locally", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(requireActivity(), Home_screen::class.java))
+                        requireActivity().finish()
+                        return@setOnClickListener
+                    }
+
+                    // Authenticated user: Check if height exists in cloud
+                    val detailsRef = FirebaseFirestore.getInstance().collection("user").document(currentUser.uid)
+                    detailsRef.get().addOnSuccessListener { document ->
+                        if (document != null && document.exists() && document.contains("height")) {
+                            startActivity(Intent(requireActivity(), Home_screen::class.java))
+                            requireActivity().finish()
+                        } else {
+                            // Missing height, show height picker
+                            weightv.visibility = View.GONE
+                            height.visibility = View.VISIBLE
                         }
+                    }.addOnFailureListener {
+                        // Fallback: navigate home if Firestore fails
+                        startActivity(Intent(requireActivity(), Home_screen::class.java))
+                        requireActivity().finish()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Internet connection required", Toast.LENGTH_SHORT).show()
+                    // Offline: Save weight locally and navigate home
+                    addweight()
+                    Toast.makeText(requireContext(), "Saved locally (Offline)", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(requireActivity(), Home_screen::class.java))
+                    requireActivity().finish()
+                }
+            }
+            
+            addh.setOnClickListener {
+                val currentUser = FirebaseAuth.getInstance().currentUser
+                if (isInternetOn(requireContext()) && currentUser != null && !currentUser.isAnonymous) {
+                    val hValue = ft.value + (inch.value.toFloat() / 12f)
+                    FirebaseFirestore.getInstance().collection("user").document(currentUser.uid)
+                        .update("height", hValue.toString()).addOnSuccessListener {
+                            startActivity(Intent(requireActivity(), Home_screen::class.java))
+                            requireActivity().finish()
+                        }.addOnFailureListener {
+                            startActivity(Intent(requireActivity(), Home_screen::class.java))
+                            requireActivity().finish()
+                        }
+                } else {
+                    // Guest or Offline: Go home
+                    startActivity(Intent(requireActivity(), Home_screen::class.java))
+                    requireActivity().finish()
                 }
             }
         }

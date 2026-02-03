@@ -61,7 +61,7 @@
             android:layout_marginBottom="64dp"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/baseline_arrow_forward_ios_24"
+            android:src="@drawable/ic_baseline_done_24"
             app:backgroundTint="@color/dark_orange"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -143,12 +143,14 @@
 
            <androidx.appcompat.widget.AppCompatButton
                android:id="@+id/addh"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
+               android:layout_width="56dp"
+               android:layout_height="56dp"
                android:layout_gravity="bottom|center"
-               android:layout_marginBottom="10dp"
+               android:layout_marginBottom="16dp"
                android:background="@drawable/btn"
-               android:text="add" />
+               android:drawableTop="@drawable/ic_baseline_done_24"
+               android:paddingTop="12dp"
+               android:backgroundTint="@color/primary"/>
        </LinearLayout>
 
    </androidx.constraintlayout.widget.ConstraintLayout>
