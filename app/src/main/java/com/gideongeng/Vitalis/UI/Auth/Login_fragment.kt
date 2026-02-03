@@ -301,6 +301,23 @@ class Login_fragment():Fragment() {
     }
 
     private fun onAuthSuccess() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null && !currentUser.isAnonymous) {
+            val userRef = FirebaseFirestore.getInstance().collection("user").document(currentUser.uid)
+            
+            // Sync profile data to Firestore if it doesn't exist
+            userRef.get().addOnSuccessListener { document ->
+                if (!document.exists()) {
+                    val userData = hashMapOf(
+                        "fullname" to (currentUser.displayName ?: "User"),
+                        "email" to (currentUser.email ?: ""),
+                        "uid" to currentUser.uid
+                    )
+                    userRef.set(userData)
+                }
+            }
+        }
+        
         Toast.makeText(activity, "Logged in Successfully", Toast.LENGTH_SHORT).show()
         startActivity(Intent(activity, Home_screen::class.java))
         activity!!.finish()

@@ -232,14 +232,30 @@ class profile_fragment : Fragment() {
                 startActivity(Intent(activity, MainAuthentication::class.java))
                 requireActivity().finish()
             }
+
+            // Fallback to Firebase Auth data if Firestore hasn't synced yet
+            binding.username.text = currentUser.displayName ?: "User"
+            binding.email.text = currentUser.email ?: ""
+            if (binding.username.text.isNotEmpty()) {
+                binding.tvLet.text = binding.username.text[0].uppercase().toString()
+            }
+
             userDitails?.addSnapshotListener { it, error ->
                 if (error != null) return@addSnapshotListener
                 if (it != null && it.exists()) {
-                    binding.username.text = it.data?.get("fullname").toString()
-                    binding.email.text = it.data?.get("email").toString()
-                    binding.tvLet.text = binding.username.text.toString()[0].toString()
+                    val fullname = it.data?.get("fullname")?.toString()
+                    val email = it.data?.get("email")?.toString()
+                    
+                    if (!fullname.isNullOrEmpty() && fullname != "null") {
+                        binding.username.text = fullname
+                        binding.tvLet.text = fullname[0].uppercase().toString()
+                    }
+                    if (!email.isNullOrEmpty() && email != "null") {
+                        binding.email.text = email
+                    }
+
                     val dob = it.data?.get("dob").toString()
-                    if (dob.length >= 4) {
+                    if (dob.length >= 4 && dob != "null") {
                         try {
                             val birthyear = dob.substring(dob.length - 4).toInt()
                             var currentYear = LocalDate.now().year

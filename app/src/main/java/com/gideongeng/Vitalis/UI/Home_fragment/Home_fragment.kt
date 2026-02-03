@@ -79,12 +79,20 @@ class Home_fragment : Fragment() {
         handler.post(updatetimeRunnable)
 //        try {
             dialog = Dialog(requireActivity())
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser != null && !currentUser.isAnonymous && currentUser.displayName != null) {
+                binding.name.text = currentUser.displayName
+            }
+
             userDitails.addSnapshotListener { value, error ->
                 if (error != null) {
                     return@addSnapshotListener
                 }
                 if (value != null && value.exists()) {
-                    binding.name.text = value.data!!["fullname"].toString()
+                    val fullname = value.data?.get("fullname")?.toString()
+                    if (!fullname.isNullOrEmpty() && fullname != "null") {
+                        binding.name.text = fullname
+                    }
                 }
             }
         set_target()
