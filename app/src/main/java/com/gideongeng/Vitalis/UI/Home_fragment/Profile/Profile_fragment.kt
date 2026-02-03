@@ -36,6 +36,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.bumptech.glide.Glide
 import java.text.DecimalFormat
 import java.time.LocalDate
@@ -240,11 +241,19 @@ class profile_fragment : Fragment() {
 
     private fun updateProfileField(field: String, value: String) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val data = hashMapOf(field to value)
         FirebaseFirestore.getInstance().collection("user").document(uid)
-            .update(field, value)
+            .set(data, SetOptions.merge())
             .addOnSuccessListener {
-                Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
-                UserDetails()
+                if (isAdded) {
+                    Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+                    UserDetails()
+                }
+            }
+            .addOnFailureListener { e: Exception ->
+                if (isAdded) {
+                    Toast.makeText(context, "Failed to update: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
     }
 
@@ -294,8 +303,8 @@ class profile_fragment : Fragment() {
             }
             
             currentUser.photoUrl?.let {
-                Glide.with(this).load(it).into(binding.profile_img)
-                binding.profile_img.visibility = View.VISIBLE
+                Glide.with(this).load(it).into(binding.profileImg)
+                binding.profileImg.visibility = View.VISIBLE
                 binding.tvLet.visibility = View.GONE
             }
 

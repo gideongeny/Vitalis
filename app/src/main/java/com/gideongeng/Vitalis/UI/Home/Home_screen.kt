@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.View
@@ -35,14 +36,22 @@ import java.util.*
 @AndroidEntryPoint
 @Suppress("UNREACHABLE_CODE")
 class Home_screen : AppCompatActivity() {
-    @RequiresApi(VERSION_CODES.TIRAMISU)
-    private var permissions = arrayOf(
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.BODY_SENSORS,
-        Manifest.permission.ACTIVITY_RECOGNITION,
-        Manifest.permission.POST_NOTIFICATIONS
-    )
+    private val permissions: Array<String>
+        get() {
+            val p = arrayListOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.BODY_SENSORS
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                p.add(Manifest.permission.ACTIVITY_RECOGNITION)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                p.add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+            return p.toTypedArray()
+        }
+
     private val REQUEST_CODE_PERMISSIONS = 11;
     public lateinit var buttonnav: BottomNavigationView
     private val userDitails: DocumentReference? by lazy {
@@ -152,13 +161,14 @@ class Home_screen : AppCompatActivity() {
     @SuppressLint("NewApi")
     @RequiresApi(VERSION_CODES.M)
     private fun checkpermission() {
-        val allPermissionGranted = permissions.all {
+        val currentPermissions = permissions
+        val allPermissionGranted = currentPermissions.all {
             ContextCompat.checkSelfPermission(
                 this, it
             ) == PackageManager.PERMISSION_GRANTED
         }
         if (!allPermissionGranted) {
-            requestPermissions(permissions, REQUEST_CODE_PERMISSIONS)
+            requestPermissions(currentPermissions, REQUEST_CODE_PERMISSIONS)
         }
     }
 

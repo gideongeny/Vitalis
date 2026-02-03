@@ -34,6 +34,8 @@ import com.gideongeng.Vitalis.databinding.FragmentHomeFragmentBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.gideongeng.Vitalis.UI.Home_fragment.Profile.profile_fragment
+import com.gideongeng.Vitalis.UI.Auth.MainAuthentication
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.util.*
@@ -111,7 +113,7 @@ class Home_fragment : Fragment() {
             binding.apply {
                 profileCard.setOnClickListener {
                     parentFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, profile_fragment())
+                        .replace(R.id.frg, profile_fragment())
                         .addToBackStack(null)
                         .commit()
                 }

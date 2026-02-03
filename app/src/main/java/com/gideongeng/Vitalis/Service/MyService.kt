@@ -35,7 +35,9 @@ class MyService : Service(), SensorEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        sensorManager.unregisterListener(steocounterListener)
+        if (::sensorManager.isInitialized) {
+            sensorManager.unregisterListener(this)
+        }
         stopSelf()
     }
 
@@ -108,6 +110,12 @@ class MyService : Service(), SensorEventListener {
         var previoustotalstep = Constant.loadData(this, "step_count", "previous_step", "0")!!.toInt()
         var lastSensorValue = Constant.loadData(this, "step_count", "last_sensor", "0")!!.toInt()
         var resets = Constant.loadData(this, "step_count", "resets", "0")!!.toInt()
+
+        // Initialization: If this is the very first time tracking, set the current sensor value as the baseline
+        if (previoustotalstep == 0) {
+            previoustotalstep = total_steps
+            Constant.savedata(this, "step_count", "previous_step", previoustotalstep.toString())
+        }
 
         // Detect Reboot/Sensor Reset
         if (total_steps < lastSensorValue) {
