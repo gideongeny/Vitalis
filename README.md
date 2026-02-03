@@ -12,6 +12,17 @@ Welcome to **Vitalis**, the world-class health and wellness platform for 2026. T
 - **Premium Onboarding**: Revamped Splash Screen with fluid animations and modernized authentication flows.
 - **Multi-Method Authentication**: Email/Password, Google Sign-In, Phone Authentication, and Anonymous/Guest access with a fully scrollable login interface.
 - **Health Suite**: Integrated tracking for Water, Steps, Calories, Weight, and Sleep with a sophisticated, easy-to-read interface.
+- **Incremental Step Targets**: Dynamic goal setting that increases by 10,000 steps once reached, encouraging continuous movement.
+
+## 📱 Screenshots
+
+| Home & Tracking | Plans & Reminders |
+|:---:|:---:|
+| ![Home](screenshots/home_screen.jpg) | ![Plans](screenshots/plans_screen.jpg) |
+
+| Health Reports | Specialized Profile |
+|:---:|:---:|
+| ![Stats](screenshots/stats_screen.jpg) | ![Profile](screenshots/profile_screen.jpg) |
 
 ## 🔐 Google Sign-In Configuration
 
