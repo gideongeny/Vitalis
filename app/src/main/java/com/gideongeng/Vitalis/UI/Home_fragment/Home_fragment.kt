@@ -2,8 +2,10 @@ package com.gideongeng.Vitalis.UI.Home_fragment
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.hardware.SensorManager
@@ -57,6 +59,24 @@ class Home_fragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private var curr_date: String = LocalDate.now().toString()
+    
+    private val stepUpdateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val steps = intent?.getIntExtra("steps", 0) ?: 0
+            val target = intent?.getStringExtra("target") ?: "1000"
+            updateStepUI(steps, target)
+        }
+    }
+
+    private fun updateStepUI(steps: Int, target: String) {
+        binding.walk.text = steps.toString()
+        binding.burn.text = (round(steps.toFloat() * 0.04).toInt()).toString()
+        binding.circularProgressBar.progress = steps.toFloat()
+        binding.circularProgressBar.progressMax = target.toFloat()
+        binding.goal.text = target
+        binding.burnCal.progress = (round(steps.toFloat() * 0.04).toInt()).toFloat()
+    }
+
     private val updatetimeRunnable = object : Runnable {
         @RequiresApi(Build.VERSION_CODES.O)
         @SuppressLint("SimpleDateFormat")
@@ -139,6 +159,9 @@ class Home_fragment : Fragment() {
                     startActivity(Intent(requireActivity(),Food_track::class.java))
                 }
             }
+            
+            val filter = IntentFilter("com.gideongeng.Vitalis.STEP_UPDATE")
+            requireActivity().registerReceiver(stepUpdateReceiver, filter)
 
 //            var cpbar = binding.circularProgressBar
 ////            reset step counter
@@ -202,6 +225,11 @@ class Home_fragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(updatetimeRunnable)
+        try {
+            requireActivity().unregisterReceiver(stepUpdateReceiver)
+        } catch (e: Exception) {
+            // Receiver not registered
+        }
     }
 
     //    control daily water intake
@@ -344,19 +372,13 @@ class Home_fragment : Fragment() {
     }
 
     fun stepCounter() {
-        val t_step = Constant.loadData(requireContext(), "step_count", "total_step", "0").toString()
-        val pre_step =
-            Constant.loadData(requireContext(), "step_count", "previous_step", "0").toString()
-        val curr_step = abs(t_step.toInt() - pre_step.toInt()).toString()
-        binding.walk.text = curr_step.toString()
-        binding.burn.text = (round(curr_step.toFloat() * 0.04).toInt()).toString()
-        val cpbar = binding.circularProgressBar
-        cpbar.progress = curr_step.toFloat()
-        val burnprobar = binding.burnCal
-        burnprobar.progress = ((round(curr_step.toFloat() * 0.04).toInt()).toFloat())
-        burnprobar.setOnClickListener {
-            Toast.makeText(requireContext(), "Long press to set target", Toast.LENGTH_SHORT).show()
-        }
+        val t_step = Constant.loadData(requireContext(), "step_count", "total_step", "0")!!.toInt()
+        val pre_step = Constant.loadData(requireContext(), "step_count", "previous_step", "0")!!.toInt()
+        val resets = Constant.loadData(requireContext(), "step_count", "resets", "0")!!.toInt()
+        
+        val curr_step = abs(t_step - pre_step) + resets
+        val target = Constant.loadData(requireContext(), "myPrefs", "target", "1000")!!
+        updateStepUI(curr_step, target)
     }
 
     fun addTarget() {

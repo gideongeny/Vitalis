@@ -132,17 +132,32 @@ class MyService : Service(), SensorEventListener {
         var currsteps = (total_steps - previoustotalstep) + resets
         if (currsteps < 0) currsteps = total_steps // Fallback for edge cases
 
-        val target = Constant.loadData(this, "myPrefs", "target", "1000").toString()
+        // Dynamic Target Logic: Increment target by 10k when reached
+        var targetValue = Constant.loadData(this, "myPrefs", "target", "1000")!!.toInt()
+        if (currsteps >= targetValue) {
+            targetValue += 10000
+            Constant.savedata(this, "myPrefs", "target", targetValue.toString())
+        }
+        val target = targetValue.toString()
+
         val curr_date = LocalDate.now().toString()
         
         if (Constant.isInternetOn(applicationContext)) {
             dataupload(currsteps.toString(), curr_date)
         }
         
+        // Update Notification for every single step
         notificationManager.notify(1,
             notification.setContentText("Current Steps : $currsteps  Target Steps: $target")
                 .build()
         )
+        
+        // Send broadcast to update UI in real-time
+        val intent = Intent("com.gideongeng.Vitalis.STEP_UPDATE")
+        intent.putExtra("steps", currsteps)
+        intent.putExtra("target", target)
+        sendBroadcast(intent)
+
         startForeground(1, notification.build())
     }
 
